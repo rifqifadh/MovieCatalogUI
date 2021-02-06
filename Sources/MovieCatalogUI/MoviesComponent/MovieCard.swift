@@ -59,9 +59,10 @@ public struct MovieCardView: View {
 				.multilineTextAlignment(.center)
 				.lineLimit(2)
 				.padding(.top, 8)
+				.fixedSize(horizontal: false, vertical: true)
 			
 			Spacer()
 		}
-		.frame(width: _width, height: _width * 2)
+		.frame(width: _width, height: _width * 2.2)
 	}
 }
