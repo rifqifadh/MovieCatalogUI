@@ -54,7 +54,6 @@ public struct StickyHeader<Header: View, Content: View>: View {
 			
 			content()
 		}
-		.clipped()
 		.edgesIgnoringSafeArea(.top)
     }
 }

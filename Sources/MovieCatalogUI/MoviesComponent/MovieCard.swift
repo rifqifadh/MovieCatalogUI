@@ -36,7 +36,7 @@ public struct MovieCardView: View {
 					.resizable()
 					.indicator(.activity)
 					.cornerRadius(10)
-					.frame(width: _width, height: _width * 1.4)
+					.frame(width: _width, height: _width * 1.5)
 				
 				ProgressView(value: _progressValue, total: 100)
 					.progressViewStyle(
@@ -63,6 +63,6 @@ public struct MovieCardView: View {
 			
 			Spacer()
 		}
-		.frame(width: _width, height: _width * 2.2)
+		.frame(width: _width, height: _width * 2)
 	}
 }
