@@ -9,6 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 public struct StickyHeader<Header: View, Content: View>: View {
+
+	@State private var showButtonOnScroll = false
 	
 	var heightHeader: CGFloat
 	let header: () -> Header
@@ -26,83 +28,84 @@ public struct StickyHeader<Header: View, Content: View>: View {
 		self.dismiss = dismiss
 	}
 	
-    public var body: some View {
-		ScrollView(.vertical, showsIndicators: false) {
-			GeometryReader { geo in
-				ZStack(alignment: .topTrailing) {
+	public var body: some View {
+		ZStack(alignment: Alignment(horizontal: .trailing,
+											 vertical: .top)) {
+			ScrollView(.vertical, showsIndicators: false) {
+			  GeometryReader { geo in
+				  ZStack(alignment: .topTrailing) {
 					header()
 						.frame(width: geo.size.width, height: self.getHeightForHeaderImage(geo))
 						.blur(radius: self.getBlurRadiusForImage(geo), opaque: true)
 						.clipped()
 						.offset(x: 0, y: self.getOffsetForHeaderImage(geo))
-					
-					if let action = dismiss {
-						Button(action: action, label: {
-							ZStack(alignment: .center) {
-								Circle()
-									.fill(Color.gray.opacity(0.5))
-								Image(systemName: "xmark")
-									.foregroundColor(.white)
-							}
-						})
-						.frame(width: 35, height: 35)
-						.offset(x: -20.0, y: self.getOffsetButton(geo))
-					}
-				}
-			}
-			.frame(height: heightHeader)
+				  }
+			  }
+			  .frame(height: heightHeader)
+			  
+			  content()
+		  }
+			.edgesIgnoringSafeArea(.top)
 			
-			content()
+			if let action = dismiss {
+				closeButton(action: action)
+					.frame(width: 32, height: 32)
+					.offset(x: -20.0, y: 36)
+			}
 		}
-		.edgesIgnoringSafeArea(.top)
-    }
+	}
+	
+	private func closeButton(action: @escaping () -> Void) -> some View {
+		Button(action: action, label: {
+			ZStack(alignment: .center) {
+				Circle()
+					.fill(Color.gray.opacity(0.6))
+				Image(systemName: "xmark")
+					.font(Font.caption.weight(.bold))
+					.foregroundColor(Color.white)
+			}
+		})
+	}
 }
 
 extension StickyHeader {
 	private func getScrollOffset(_ geometry: GeometryProxy) -> CGFloat {
-	  return geometry.frame(in: .global).minY
+		return geometry.frame(in: .global).minY
 	}
 	
 	private func getOffsetForHeaderImage(_ geometry: GeometryProxy) -> CGFloat {
-	  return -getScrollOffset(geometry)
-	  
-	  // Image was pulled down
-//	  if offset > 0 {
-//		 return -offset
-//	  }
-//	  return 0
-	}
-	
-	private func getOffsetButton(_ geometry: GeometryProxy) -> CGFloat {
-		let offset = getScrollOffset(geometry)
+		return -getScrollOffset(geometry)
 		
-		return -offset + 35
+		// Image was pulled down
+		//	  if offset > 0 {
+		//		 return -offset
+		//	  }
+		//	  return 0
 	}
 	
 	private func getHeightForHeaderImage(_ geometry: GeometryProxy) -> CGFloat {
-	  let offset = getScrollOffset(geometry)
-	  let imageHeight = geometry.size.height
-	  
-	  if offset > 0 {
-		 return offset + heightHeader
-	  }
-	  
-	  return imageHeight
+		let offset = getScrollOffset(geometry)
+		let imageHeight = geometry.size.height
+		
+		if offset > 0 {
+			return offset + heightHeader
+		}
+		
+		return imageHeight
 	}
 	
 	private func getBlurRadiusForImage(_ geometry: GeometryProxy) -> CGFloat {
-	  let offset = geometry.frame(in: .global).maxY
-	  
-	  let height = geometry.size.height
-	  let blur = (height - max(offset, 0)) / height
-	  
-	  return blur * 6
+		let offset = geometry.frame(in: .global).maxY
+		
+		let height = geometry.size.height
+		let blur = (height - max(offset, 0)) / height
+		
+		return blur * 6
 	}
 }
-
 // MARK: - Example
 struct StickyHeader_Previews: PreviewProvider {
-    static var previews: some View {
+	static var previews: some View {
 		StickyHeader {
 			Rectangle()
 				.fill(Color.blue)
@@ -125,7 +128,7 @@ struct StickyHeader_Previews: PreviewProvider {
 			print("dismiss")
 		}
 		.edgesIgnoringSafeArea(.top)
-    }
+	}
 }
 
 #if DEBUG
