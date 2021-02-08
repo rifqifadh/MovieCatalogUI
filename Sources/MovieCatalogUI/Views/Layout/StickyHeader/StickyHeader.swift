@@ -45,7 +45,6 @@ public struct StickyHeader<Header: View, Content: View>: View {
 			  
 			  content()
 		  }
-			.edgesIgnoringSafeArea(.top)
 			
 			if let action = dismiss {
 				closeButton(action: action)
@@ -53,6 +52,7 @@ public struct StickyHeader<Header: View, Content: View>: View {
 					.offset(x: -20.0, y: 36)
 			}
 		}
+		.edgesIgnoringSafeArea(.top)
 	}
 	
 	private func closeButton(action: @escaping () -> Void) -> some View {
